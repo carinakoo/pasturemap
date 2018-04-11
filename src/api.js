@@ -4,6 +4,7 @@ const _ = require('lodash')
 const moment = require('moment');
 
 module.exports = router => {
+  // add animal
   router.post('/animal', async (req, res) => {
     const { body } = req
     if (!body.id) res.sendStatus(400);
@@ -20,6 +21,7 @@ module.exports = router => {
     res.send(animal)
   });
 
+  // add weight
   router.post('/animal/:id/weight', async (req, res) => {
     const animal = await Animal.query().findById(req.params.id);
 
@@ -34,12 +36,14 @@ module.exports = router => {
     res.send(weight_record);
   });
 
+  // get list of animals with weights
   router.get('/animal', async (req, res) => {
     const animals = await Animal.query()
       .eager('weights')
     res.json(animals)
   });
 
+  // get total estimated weight
   router.get('/animal/estimated_weight', async (req, res) => {
     const { query: { date } } = req
     const animals = await Animal.query()
@@ -55,6 +59,7 @@ module.exports = router => {
   });
 }
 
+// calculated interpolated weight for one animal
 const getInterpolatedWeight = date => animal => {
   const { weights } = animal
   if (weights.length === 0) return 0
